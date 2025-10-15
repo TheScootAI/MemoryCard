@@ -29,11 +29,13 @@ Single `MemoryGame` class (game.js) managing:
 | Medium | 16 | 8 | 4x4 |
 | Hard | 24 | 12 | 6x4 |
 
-## Testing
+## Slash Commands
 
-Run `/test` slash command for automated tests (9 test cases, all passing ✅):
-- Initial state, card mechanics, statistics
-- All difficulty levels
-- Victory condition, game reset buttons
+**`/test`** - Run automated tests (9 test cases, all passing ✅)
+- Tests: initial state, card mechanics, statistics, difficulty levels, victory, reset
+- Output: screenshots in `.playwright-mcp/` directory
 
-Screenshots saved to `.playwright-mcp/` directory.
+**`/commit`** - Guidelines for consistent commit messages
+- Enforces commit message format and patterns
+- Includes examples (feat, fix, docs, refactor, etc.)
+- Ensures professional code history
