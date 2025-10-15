@@ -88,12 +88,12 @@ You will write less code yourself but will write *better code* by leveraging AI 
 
 After 6 months, you will have:
 
-✅ Shipped 2-3 complete, production-quality applications using agent-assisted development
-✅ Established clear architectural patterns and standards for your team
-✅ Created comprehensive documentation and slash commands that accelerate development
-✅ Trained team members on effective human-AI collaboration workflows
-✅ Built automated test suites that comprehensively validate AI-generated code
-✅ Demonstrated that agent-assisted development can produce code faster AND better than traditional development
+- Shipped 2-3 complete, production-quality applications using agent-assisted development
+- Established clear architectural patterns and standards for your team
+- Created comprehensive documentation and slash commands that accelerate development
+- Trained team members on effective human-AI collaboration workflows
+- Built automated test suites that comprehensively validate AI-generated code
+- Demonstrated that agent-assisted development can produce code faster AND better than traditional development
 
 ## Example Project
 
@@ -106,14 +106,13 @@ A great example of the work you'd do:
 - Generated detailed documentation and test reports
 - Result: Production-ready game with excellent code quality, shipped in hours not weeks
 
-## Compensation & Benefits
+## Benefits
 
-- **Salary:** $150K - $200K (based on experience)
-- **Remote-first:** Work from anywhere
-- **Equity:** Competitive equity package
-- **Benefits:** Health, dental, vision, 401k, unlimited PTO
-- **Learning budget:** $5K/year for courses and conferences
-- **Hardware:** Latest MacBook Pro, peripherals of your choice
+- Remote-first: Work from anywhere
+- Competitive equity package
+- Health, dental, vision, 401k, unlimited PTO
+- Learning budget for courses and conferences
+- Latest hardware and peripherals of your choice
 
 ## How We Work
 
@@ -134,11 +133,11 @@ This role is designed for engineers who are:
 
 ## Red Flags We're Avoiding
 
-❌ Engineers who think AI agents will replace them (they won't - you're the director)
-❌ Engineers who can't adapt to new ways of working
-❌ Engineers who prioritize speed over quality
-❌ Engineers who don't document their work
-❌ Engineers who treat testing as optional
+- Engineers who think AI agents will replace them (they won't - you're the director)
+- Engineers who can't adapt to new ways of working
+- Engineers who prioritize speed over quality
+- Engineers who don't document their work
+- Engineers who treat testing as optional
 
 ## Why You Should Apply
 
@@ -160,6 +159,6 @@ Please submit:
 
 ---
 
-**The Agentic Software Engineer doesn't replace developers. They amplify them.**
+The Agentic Software Engineer doesn't replace developers. They amplify them.
 
 If you're excited about this new paradigm and ready to push the boundaries of what's possible, we want to hear from you.
