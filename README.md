@@ -110,6 +110,26 @@ The game has been thoroughly tested with Playwright. See `TEST_PLAN.md` for:
 
 **Test Result:** ✅ All tests passed
 
+### Running Automated Tests with Claude Code
+
+In Claude Code, use the `/test` slash command to run comprehensive automated tests:
+
+```bash
+/test
+```
+
+This command will:
+- Launch the browser and navigate to the game
+- Test all game mechanics (flipping, matching, non-matching)
+- Verify statistics tracking (moves, matches, time)
+- Test victory condition and modal
+- Test all three difficulty levels (Easy, Medium, Hard)
+- Test New Game and Play Again buttons
+- Generate screenshots of each test phase
+- Produce a detailed test summary report
+
+The test command executes 9 comprehensive test cases covering all core functionality and produces evidence screenshots in the `.playwright-mcp/` directory.
+
 ## Browser Support
 
 Tested and working in:

@@ -44,3 +44,47 @@ The game uses a single-class architecture with client-side rendering:
 - **Timing Critical**: The game uses nested setTimeout calls to control card flip animations and user observation periods. When modifying timing, maintain the sequence: flip → delay → animate → flip back
 - **DOM References**: Card elements use data-index attribute to map back to cards array
 - **CSS State Classes**: `.flipped`, `.matched`, `.wrong` trigger animations and visual states
+
+## Testing with Claude Code
+
+### Automated Testing Slash Command
+
+A `/test` slash command is available for running comprehensive automated tests:
+
+```bash
+/test
+```
+
+This command launches Playwright and runs 9 comprehensive test cases:
+
+1. **Initial Game State** - Verifies UI elements, default difficulty (Medium), and card layout
+2. **Card Flipping & Matching** - Tests card flip mechanics and matching behavior
+3. **Non-Matching Cards** - Verifies cards flip back after observation period
+4. **Statistics Tracking** - Validates moves, matches, and time tracking
+5. **Victory Condition** - Tests victory modal and final statistics display
+6. **Easy Difficulty** - Tests 8-card (4 pairs) mode with 4x2 grid
+7. **Medium Difficulty** - Tests 16-card (8 pairs) mode with 4x4 grid
+8. **Hard Difficulty** - Tests 24-card (12 pairs) mode with 6x4 grid
+9. **Game Reset Buttons** - Tests New Game and Play Again functionality
+
+**Test Coverage:**
+- All game mechanics (flipping, matching, non-matching)
+- All three difficulty levels
+- Game statistics accuracy
+- Victory detection and display
+- Game reset and shuffle functionality
+- UI responsiveness and animations
+
+**Output:**
+- 9 test cases with pass/fail status
+- Screenshot evidence for each test phase
+- Detailed test summary report
+- No issues found - all tests passing ✅
+
+**Screenshots Location:** `.playwright-mcp/` directory
+- `test-1-initial-state.png` - Initial game board
+- `test-3-nonmatching-cards.png` - Non-matching behavior
+- `test-5-victory-modal.png` - Victory screen
+- `test-6a-easy-difficulty.png` - Easy mode
+- `test-6b-hard-difficulty.png` - Hard mode
+- `test-7-new-game-reset.png` - After reset
