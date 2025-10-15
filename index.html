@@ -8,55 +8,43 @@
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>Memory Card Game</h1>
-            <div class="stats">
-                <div class="stat">
-                    <span class="stat-label">Moves:</span>
-                    <span id="moves" class="stat-value">0</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-label">Matches:</span>
-                    <span id="matches" class="stat-value">0 / 8</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-label">Time:</span>
-                    <span id="timer" class="stat-value">0:00</span>
-                </div>
+        <h1>Memory Card Game</h1>
+
+        <div class="game-info">
+            <div class="stat">
+                <span class="label">Moves:</span>
+                <span id="moves">0</span>
             </div>
-        </header>
+            <div class="stat">
+                <span class="label">Matches:</span>
+                <span id="matches">0</span>
+            </div>
+            <div class="stat">
+                <span class="label">Time:</span>
+                <span id="time">0:00</span>
+            </div>
+        </div>
 
         <div id="game-board" class="game-board">
-            <!-- Cards will be dynamically generated here -->
+            <!-- Cards will be generated here by JavaScript -->
         </div>
 
         <div class="controls">
-            <button id="reset-btn" class="btn btn-primary">New Game</button>
-            <button id="difficulty-btn" class="btn btn-secondary">Change Difficulty</button>
+            <button id="restart-btn" class="btn">New Game</button>
+            <select id="difficulty" class="difficulty-select">
+                <option value="easy">Easy (8 cards)</option>
+                <option value="medium" selected>Medium (16 cards)</option>
+                <option value="hard">Hard (24 cards)</option>
+            </select>
         </div>
 
-        <div id="difficulty-modal" class="modal hidden">
-            <div class="modal-content">
-                <h2>Select Difficulty</h2>
-                <div class="difficulty-options">
-                    <button class="difficulty-btn" data-pairs="6">Easy (6 pairs)</button>
-                    <button class="difficulty-btn" data-pairs="8">Medium (8 pairs)</button>
-                    <button class="difficulty-btn" data-pairs="12">Hard (12 pairs)</button>
-                </div>
-                <button id="close-modal" class="btn btn-secondary">Cancel</button>
-            </div>
-        </div>
-
-        <div id="win-modal" class="modal hidden">
-            <div class="modal-content">
-                <h2>🎉 Congratulations!</h2>
-                <p>You won!</p>
-                <p id="win-stats"></p>
-                <button id="play-again" class="btn btn-primary">Play Again</button>
-            </div>
+        <div id="victory-message" class="victory-message hidden">
+            <h2>🎉 Congratulations! 🎉</h2>
+            <p>You won in <span id="final-moves"></span> moves and <span id="final-time"></span>!</p>
+            <button id="play-again-btn" class="btn">Play Again</button>
         </div>
     </div>
 
-    <script src="game.js?v=2"></script>
+    <script src="game.js"></script>
 </body>
 </html>

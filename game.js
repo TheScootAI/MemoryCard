@@ -1,359 +1,207 @@
-/**
- * Memory Card Game
- * A classic memory matching game with multiple difficulty levels
- */
-
 class MemoryGame {
     constructor() {
         // Game state
         this.cards = [];
         this.flippedCards = [];
-        this.matchedPairs = 0;
         this.moves = 0;
+        this.matches = 0;
         this.isProcessing = false;
-        this.timerInterval = null;
+        this.timer = null;
         this.seconds = 0;
-        this.numberOfPairs = 8; // Default: medium difficulty
 
-        // Card symbols (emojis for visual appeal)
-        this.symbols = [
-            '🎮', '🎯', '🎨', '🎭', '🎪', '🎸', '🎺', '🎻',
-            '🏀', '⚽', '🏈', '🎾', '🏐', '🏉', '⚾', '🥎'
-        ];
+        // Card symbols - using emojis for visual appeal
+        this.symbols = ['🎮', '🎨', '🎭', '🎪', '🎯', '🎲', '🎸', '🎹', '🎺', '🎻', '🎬', '🎤'];
 
         // DOM elements
         this.gameBoard = document.getElementById('game-board');
         this.movesDisplay = document.getElementById('moves');
         this.matchesDisplay = document.getElementById('matches');
-        this.timerDisplay = document.getElementById('timer');
-        this.resetBtn = document.getElementById('reset-btn');
-        this.difficultyBtn = document.getElementById('difficulty-btn');
-        this.difficultyModal = document.getElementById('difficulty-modal');
-        this.winModal = document.getElementById('win-modal');
-        this.closeModalBtn = document.getElementById('close-modal');
-        this.playAgainBtn = document.getElementById('play-again');
-        this.winStatsDisplay = document.getElementById('win-stats');
+        this.timeDisplay = document.getElementById('time');
+        this.restartBtn = document.getElementById('restart-btn');
+        this.difficultySelect = document.getElementById('difficulty');
+        this.victoryMessage = document.getElementById('victory-message');
+        this.playAgainBtn = document.getElementById('play-again-btn');
 
-        // Initialize the game
-        this.init();
-    }
-
-    /**
-     * Initialize the game and set up event listeners
-     */
-    init() {
-        this.setupEventListeners();
-        this.startNewGame();
-    }
-
-    /**
-     * Set up all event listeners
-     */
-    setupEventListeners() {
-        this.resetBtn.addEventListener('click', () => this.startNewGame());
-        this.difficultyBtn.addEventListener('click', () => this.showDifficultyModal());
-        this.closeModalBtn.addEventListener('click', () => this.hideDifficultyModal());
+        // Bind event listeners
+        this.restartBtn.addEventListener('click', () => this.initGame());
+        this.difficultySelect.addEventListener('change', () => this.initGame());
         this.playAgainBtn.addEventListener('click', () => {
-            this.hideWinModal();
-            this.startNewGame();
+            this.victoryMessage.classList.add('hidden');
+            this.initGame();
         });
 
-        // Difficulty selection buttons
-        document.querySelectorAll('.difficulty-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                this.numberOfPairs = parseInt(e.target.dataset.pairs);
-                this.hideDifficultyModal();
-                this.startNewGame();
-            });
-        });
+        // Start the game
+        this.initGame();
     }
 
-    /**
-     * Start a new game
-     */
-    startNewGame() {
+    initGame() {
         // Reset game state
-        this.cards = [];
         this.flippedCards = [];
-        this.matchedPairs = 0;
         this.moves = 0;
+        this.matches = 0;
         this.isProcessing = false;
         this.seconds = 0;
 
-        // Stop any existing timer
-        if (this.timerInterval) {
-            clearInterval(this.timerInterval);
-            this.timerInterval = null;
+        // Clear timer if exists
+        if (this.timer) {
+            clearInterval(this.timer);
+            this.timer = null;
         }
 
         // Update displays
-        this.updateStats();
-        this.updateTimer();
+        this.movesDisplay.textContent = '0';
+        this.matchesDisplay.textContent = '0';
+        this.timeDisplay.textContent = '0:00';
 
-        // Create and shuffle cards
-        this.createCards();
+        // Get difficulty and create cards
+        const difficulty = this.difficultySelect.value;
+        const numPairs = this.getNumPairs(difficulty);
+        this.createCards(numPairs);
         this.renderCards();
+
+        // Update board class for grid layout
+        this.gameBoard.className = 'game-board ' + difficulty;
     }
 
-    /**
-     * Create card pairs based on difficulty
-     */
-    createCards() {
-        const selectedSymbols = this.symbols.slice(0, this.numberOfPairs);
-        const cardPairs = [...selectedSymbols, ...selectedSymbols];
-
-        // Shuffle the cards using Fisher-Yates algorithm
-        this.cards = this.shuffle(cardPairs).map((symbol, index) => ({
-            id: index,
-            symbol: symbol,
-            isFlipped: false,
-            isMatched: false
-        }));
+    getNumPairs(difficulty) {
+        switch(difficulty) {
+            case 'easy': return 4;
+            case 'medium': return 8;
+            case 'hard': return 12;
+            default: return 8;
+        }
     }
 
-    /**
-     * Shuffle an array using Fisher-Yates algorithm
-     */
+    createCards(numPairs) {
+        // Create pairs of cards
+        this.cards = [];
+        const selectedSymbols = this.symbols.slice(0, numPairs);
+
+        // Create two of each symbol
+        selectedSymbols.forEach(symbol => {
+            this.cards.push({ symbol, id: Math.random(), matched: false });
+            this.cards.push({ symbol, id: Math.random(), matched: false });
+        });
+
+        // Shuffle cards
+        this.shuffle(this.cards);
+    }
+
     shuffle(array) {
-        const shuffled = [...array];
-        for (let i = shuffled.length - 1; i > 0; i--) {
+        for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
-            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            [array[i], array[j]] = [array[j], array[i]];
         }
-        return shuffled;
     }
 
-    /**
-     * Render cards to the DOM
-     */
     renderCards() {
-        // Set grid layout based on difficulty
-        this.gameBoard.className = 'game-board';
-        if (this.numberOfPairs === 6) {
-            this.gameBoard.classList.add('easy');
-        } else if (this.numberOfPairs === 8) {
-            this.gameBoard.classList.add('medium');
-        } else {
-            this.gameBoard.classList.add('hard');
-        }
-
-        // Clear existing cards
         this.gameBoard.innerHTML = '';
 
-        // Create card elements
-        this.cards.forEach(card => {
-            const cardElement = this.createCardElement(card);
+        this.cards.forEach((card, index) => {
+            const cardElement = document.createElement('div');
+            cardElement.className = 'card';
+            cardElement.dataset.index = index;
+
+            const cardInner = document.createElement('div');
+            cardInner.className = 'card-inner';
+            cardInner.textContent = card.symbol;
+
+            cardElement.appendChild(cardInner);
+            cardElement.addEventListener('click', () => this.handleCardClick(index));
+
             this.gameBoard.appendChild(cardElement);
         });
     }
 
-    /**
-     * Create a card DOM element
-     */
-    createCardElement(card) {
-        const cardDiv = document.createElement('div');
-        cardDiv.className = 'card';
-        cardDiv.dataset.id = card.id;
-
-        const cardFront = document.createElement('div');
-        cardFront.className = 'card-face card-front';
-        cardFront.textContent = card.symbol;
-
-        const cardBack = document.createElement('div');
-        cardBack.className = 'card-face card-back';
-
-        cardDiv.appendChild(cardFront);
-        cardDiv.appendChild(cardBack);
-
-        // Add click event listener
-        cardDiv.addEventListener('click', () => this.handleCardClick(card.id));
-
-        return cardDiv;
-    }
-
-    /**
-     * Handle card click event
-     */
-    handleCardClick(cardId) {
-        // Ignore clicks if processing or game is complete
-        if (this.isProcessing) return;
-
-        const card = this.cards[cardId];
-        const cardElement = document.querySelector(`[data-id="${cardId}"]`);
-
-        // Ignore if card is already flipped or matched
-        if (card.isFlipped || card.isMatched) return;
-
+    handleCardClick(index) {
         // Start timer on first move
-        if (this.moves === 0 && !this.timerInterval) {
+        if (this.moves === 0 && !this.timer) {
             this.startTimer();
         }
 
-        // Flip the card
-        this.flipCard(card, cardElement);
+        // Prevent clicking during processing or on already flipped/matched cards
+        if (this.isProcessing) return;
 
-        // Add to flipped cards array
-        this.flippedCards.push({ card, cardElement });
+        const card = this.cards[index];
+        const cardElement = this.gameBoard.children[index];
+
+        if (card.matched || cardElement.classList.contains('flipped')) return;
+
+        // Flip the card
+        cardElement.classList.add('flipped');
+        this.flippedCards.push({ card, element: cardElement, index });
 
         // Check if two cards are flipped
         if (this.flippedCards.length === 2) {
             this.isProcessing = true;
             this.moves++;
-            this.updateStats();
-            this.checkForMatch();
+            this.movesDisplay.textContent = this.moves;
+
+            this.checkMatch();
         }
     }
 
-    /**
-     * Flip a card
-     */
-    flipCard(card, cardElement) {
-        card.isFlipped = true;
-        cardElement.classList.add('flipped');
-    }
-
-    /**
-     * Unflip a card
-     */
-    unflipCard(card, cardElement) {
-        card.isFlipped = false;
-        cardElement.classList.remove('flipped');
-    }
-
-    /**
-     * Check if two flipped cards match
-     */
-    checkForMatch() {
+    checkMatch() {
         const [first, second] = this.flippedCards;
 
         if (first.card.symbol === second.card.symbol) {
-            // Cards match!
-            this.handleMatch(first, second);
+            // Match found!
+            setTimeout(() => {
+                first.element.classList.add('matched');
+                second.element.classList.add('matched');
+                first.card.matched = true;
+                second.card.matched = true;
+
+                this.matches++;
+                this.matchesDisplay.textContent = this.matches;
+
+                this.flippedCards = [];
+                this.isProcessing = false;
+
+                // Check if game is won
+                if (this.matches === this.cards.length / 2) {
+                    this.gameWon();
+                }
+            }, 500);
         } else {
-            // Cards don't match
-            this.handleMismatch(first, second);
+            // No match - flip back after delay
+            setTimeout(() => {
+                first.element.classList.add('wrong');
+                second.element.classList.add('wrong');
+
+                setTimeout(() => {
+                    first.element.classList.remove('flipped', 'wrong');
+                    second.element.classList.remove('flipped', 'wrong');
+
+                    this.flippedCards = [];
+                    this.isProcessing = false;
+                }, 500);
+            }, 1000);
         }
     }
 
-    /**
-     * Handle matching cards
-     */
-    handleMatch(first, second) {
-        // Mark cards as matched (keep them flipped)
-        first.card.isMatched = true;
-        second.card.isMatched = true;
-        first.card.isFlipped = true;
-        second.card.isFlipped = true;
-        first.cardElement.classList.add('matched');
-        second.cardElement.classList.add('matched');
-        // Ensure they stay flipped
-        first.cardElement.classList.add('flipped');
-        second.cardElement.classList.add('flipped');
-
-        // Increment matched pairs
-        this.matchedPairs++;
-        this.updateStats();
-
-        // Reset flipped cards
-        this.flippedCards = [];
-        this.isProcessing = false;
-
-        // Check if game is won
-        if (this.matchedPairs === this.numberOfPairs) {
-            this.handleWin();
-        }
-    }
-
-    /**
-     * Handle mismatched cards
-     */
-    handleMismatch(first, second) {
-        // Wait 1 second before flipping cards back
-        setTimeout(() => {
-            this.unflipCard(first.card, first.cardElement);
-            this.unflipCard(second.card, second.cardElement);
-            this.flippedCards = [];
-            this.isProcessing = false;
-        }, 1000);
-    }
-
-    /**
-     * Handle game win
-     */
-    handleWin() {
-        // Stop timer
-        if (this.timerInterval) {
-            clearInterval(this.timerInterval);
-        }
-
-        // Show win modal after a short delay
-        setTimeout(() => {
-            this.showWinModal();
-        }, 500);
-    }
-
-    /**
-     * Start the game timer
-     */
     startTimer() {
-        this.timerInterval = setInterval(() => {
+        this.timer = setInterval(() => {
             this.seconds++;
-            this.updateTimer();
+            const minutes = Math.floor(this.seconds / 60);
+            const secs = this.seconds % 60;
+            this.timeDisplay.textContent = `${minutes}:${secs.toString().padStart(2, '0')}`;
         }, 1000);
     }
 
-    /**
-     * Update timer display
-     */
-    updateTimer() {
-        const minutes = Math.floor(this.seconds / 60);
-        const seconds = this.seconds % 60;
-        this.timerDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-    }
+    gameWon() {
+        clearInterval(this.timer);
 
-    /**
-     * Update game statistics display
-     */
-    updateStats() {
-        this.movesDisplay.textContent = this.moves;
-        this.matchesDisplay.textContent = `${this.matchedPairs} / ${this.numberOfPairs}`;
-    }
-
-    /**
-     * Show difficulty selection modal
-     */
-    showDifficultyModal() {
-        this.difficultyModal.classList.remove('hidden');
-    }
-
-    /**
-     * Hide difficulty selection modal
-     */
-    hideDifficultyModal() {
-        this.difficultyModal.classList.add('hidden');
-    }
-
-    /**
-     * Show win modal
-     */
-    showWinModal() {
-        const minutes = Math.floor(this.seconds / 60);
-        const seconds = this.seconds % 60;
-        const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-
-        this.winStatsDisplay.textContent = `Moves: ${this.moves} | Time: ${timeString}`;
-        this.winModal.classList.remove('hidden');
-    }
-
-    /**
-     * Hide win modal
-     */
-    hideWinModal() {
-        this.winModal.classList.add('hidden');
+        // Show victory message
+        setTimeout(() => {
+            document.getElementById('final-moves').textContent = this.moves;
+            document.getElementById('final-time').textContent = this.timeDisplay.textContent;
+            this.victoryMessage.classList.remove('hidden');
+        }, 500);
     }
 }
 
-// Initialize the game when the DOM is fully loaded
+// Initialize game when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     new MemoryGame();
 });
