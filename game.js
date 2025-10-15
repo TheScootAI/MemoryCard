@@ -9,6 +9,10 @@ class MemoryGame {
         this.timer = null;
         this.seconds = 0;
 
+        // Audio state
+        this.audioContext = null;
+        this.isMuted = false;
+
         // Card symbols - using emojis for visual appeal
         this.symbols = ['🎮', '🎨', '🎭', '🎪', '🎯', '🎲', '🎸', '🎹', '🎺', '🎻', '🎬', '🎤'];
 
@@ -21,6 +25,7 @@ class MemoryGame {
         this.difficultySelect = document.getElementById('difficulty');
         this.victoryMessage = document.getElementById('victory-message');
         this.playAgainBtn = document.getElementById('play-again-btn');
+        this.muteBtn = document.getElementById('mute-btn');
 
         // Bind event listeners
         this.restartBtn.addEventListener('click', () => this.initGame());
@@ -29,9 +34,80 @@ class MemoryGame {
             this.victoryMessage.classList.add('hidden');
             this.initGame();
         });
+        if (this.muteBtn) {
+            this.muteBtn.addEventListener('click', () => this.toggleMute());
+        }
 
         // Start the game
         this.initGame();
+    }
+
+    // Initialize Web Audio API context
+    initAudioContext() {
+        if (!this.audioContext) {
+            this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        return this.audioContext;
+    }
+
+    // Play a sound tone
+    playTone(frequency, duration, type = 'sine') {
+        if (this.isMuted) return;
+
+        try {
+            const ctx = this.initAudioContext();
+            const oscillator = ctx.createOscillator();
+            const gainNode = ctx.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(ctx.destination);
+
+            oscillator.frequency.value = frequency;
+            oscillator.type = type;
+
+            gainNode.gain.setValueAtTime(0.3, ctx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+
+            oscillator.start(ctx.currentTime);
+            oscillator.stop(ctx.currentTime + duration);
+        } catch (error) {
+            console.log('Audio playback not available');
+        }
+    }
+
+    // Sound effect: Card flip
+    playFlipSound() {
+        this.playTone(800, 0.1);
+    }
+
+    // Sound effect: Match found
+    playMatchSound() {
+        this.playTone(600, 0.1);
+        setTimeout(() => this.playTone(800, 0.1), 100);
+        setTimeout(() => this.playTone(1000, 0.2), 200);
+    }
+
+    // Sound effect: No match
+    playMismatchSound() {
+        this.playTone(400, 0.1);
+        setTimeout(() => this.playTone(300, 0.2), 100);
+    }
+
+    // Sound effect: Victory
+    playVictorySound() {
+        const notes = [1000, 1200, 1400, 1600];
+        notes.forEach((freq, i) => {
+            setTimeout(() => this.playTone(freq, 0.2), i * 150);
+        });
+    }
+
+    // Toggle mute
+    toggleMute() {
+        this.isMuted = !this.isMuted;
+        if (this.muteBtn) {
+            this.muteBtn.textContent = this.isMuted ? '🔇' : '🔊';
+            this.muteBtn.setAttribute('aria-label', this.isMuted ? 'Unmute' : 'Mute');
+        }
     }
 
     initGame() {
@@ -129,6 +205,7 @@ class MemoryGame {
 
         // Flip the card
         cardElement.classList.add('flipped');
+        this.playFlipSound();
         this.flippedCards.push({ card, element: cardElement, index });
 
         // Check if two cards are flipped
@@ -146,6 +223,7 @@ class MemoryGame {
 
         if (first.card.symbol === second.card.symbol) {
             // Match found!
+            this.playMatchSound();
             setTimeout(() => {
                 first.element.classList.add('matched');
                 second.element.classList.add('matched');
@@ -165,6 +243,7 @@ class MemoryGame {
             }, 500);
         } else {
             // No match - flip back after delay
+            this.playMismatchSound();
             setTimeout(() => {
                 first.element.classList.add('wrong');
                 second.element.classList.add('wrong');
@@ -191,6 +270,7 @@ class MemoryGame {
 
     gameWon() {
         clearInterval(this.timer);
+        this.playVictorySound();
 
         // Show victory message
         setTimeout(() => {

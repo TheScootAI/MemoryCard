@@ -42,6 +42,13 @@ This is a single-player memory game where players flip cards to find matching pa
   - New Game button (reset at any time)
   - Play Again button (after winning)
   - Difficulty selector
+  - Mute button (toggle sound effects on/off)
+
+- **Sound Effects:**
+  - Card flip sound (high tone)
+  - Match found sound (ascending tones)
+  - No match sound (descending tones)
+  - Victory fanfare (celebration melody)
 
 ## How to Play
 
@@ -70,6 +77,7 @@ MemoryCard/
 - **Client-side only** - No server required
 - **Responsive design** - Adapts to different screen sizes
 - **Cross-browser compatible** - Works in all modern browsers
+- **Web Audio API** - Generates sound effects dynamically (no external audio files needed)
 
 ### Architecture
 
@@ -79,6 +87,7 @@ The game uses a single `MemoryGame` class that manages:
 - Event handling
 - Timer and statistics tracking
 - Game flow control
+- Audio playback and mute state
 
 ## Development
 
