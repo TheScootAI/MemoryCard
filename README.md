@@ -2,6 +2,16 @@
 
 A browser-based implementation of the classic Concentration (Memory) card game built with vanilla JavaScript, HTML, and CSS.
 
+## Demo
+
+Watch the game in action:
+
+https://github.com/user-attachments/assets/your-video-id-here
+
+> **Note:** Replace the video link above with your actual video URL. If you're hosting this on GitHub, upload the video to a GitHub issue or release, then use the resulting URL here.
+
+Alternatively, view the demo video: [`Screenshare - 2025-10-15 1_11_58 PM.mp4`](./Screenshare%20-%202025-10-15%201_11_58%20PM.mp4)
+
 ## About
 
 This is a single-player memory game where players flip cards to find matching pairs. The game tracks moves, matches, and time, with three difficulty levels to choose from.
